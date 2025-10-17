@@ -113,3 +113,32 @@ sns.barplot(
     orient = 'h',
     dodge = False,
 ).set(title = 'Most common Named Entity in Fake News')
+
+
+# Text Preprocessing
+
+data['text_clean' ] = data.apply(lambda x : re.sub(r'^[^-] *- \s' , "", x['text']), axis = 1)
+
+#Lowercasing
+data['text_clean' ] = data['text_clean'].str.lower()
+
+# Removing Punctuation
+data['text_clean' ] = data.apply(lambda x: re.sub(r'([^\w\s])','', x['text_clean']), axis =1)
+
+en_stopwords = stopwords.words('english')
+
+# Removing stop words
+data['text_clean'] = data['text_clean'].apply(lambda x : ' '.join([word for word in x.split() if word not in (en_stopwords)]))
+
+# Tokenizing
+data['text_clean' ] = data.apply(lambda x : word_tokenize(x['text_clean']), axis = 1 )
+
+#Lemmatization
+lemmatizer = WordNetLemmatizer()
+data['text_clean' ] = data['text_clean'].apply(lambda tokens: [lemmatizer. lemmatize(token) for token in tokens])
+
+tokens_clean = sum(data['text_clean' ], [])
+
+#n-grams - unigrams
+unigrams = (pd. Series(nltk.ngrams(tokens_clean, 1)).value_counts()).reset_index() [:10]
+
