@@ -32,16 +32,6 @@ It performs **linguistic analysis**, **sentiment detection**, **topic modeling**
 
 ---
 
-## 📁 **Project Structure**
-
-📦 Fake-News-Detection
-│
-├── 📄 fake_news_detection.py # Main project script
-├── 📄 fake_news_data.csv # Dataset (or link to dataset)
-├── 📄 requirements.txt # Required Python libraries
-├── 📄 README.md # Project documentation
-└── 📊 outputs/ # Visualizations and topic plots
-
 
 
 
