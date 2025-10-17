@@ -34,3 +34,61 @@ It performs **linguistic analysis**, **sentiment detection**, **topic modeling**
 
 ## 📁 **Project Structure**
 
+📦 Fake-News-Detection
+│
+├── 📄 fake_news_detection.py # Main project script
+├── 📄 fake_news_data.csv # Dataset (or link to dataset)
+├── 📄 requirements.txt # Required Python libraries
+├── 📄 README.md # Project documentation
+└── 📊 outputs/ # Visualizations and topic plots
+
+
+
+
+## 📁 **🧪 Model Workflow**
+🔹 Data Cleaning
+
+Regex-based text cleaning, punctuation removal, and normalization.
+
+🔹 Text Representation
+
+Using Bag-of-Words (BoW) and TF-IDF vectorization for feature extraction.
+
+🔹 Exploration
+
+Visualizing POS and NER patterns using spaCy.
+
+🔹 Sentiment Analysis
+
+Computing polarity scores and visualizing sentiment class distribution.
+
+🔹 Topic Modeling
+
+Performing LDA and LSI topic extraction with coherence evaluation to find the optimal number of topics.
+
+🔹 Classification
+
+Training and evaluating Logistic Regression and SVM models with accuracy and classification metrics.
+
+
+## 📊 **Results**
+
+| Model                | Features     | Accuracy |
+| -------------------- | ------------ | -------- |
+| Logistic Regression  | Bag of Words | ~90%     |
+| SVM (SGD Classifier) | TF-IDF       | ~91–93%  |
+
+
+##💡 **Future Improvements**
+
+🔹 Integrate BERT or Transformer-based embeddings for richer semantic understanding
+🔹 Deploy as a Flask or FastAPI web application
+🔹 Extend dataset and include multilingual support
+
+
+## 👨‍💻 **Author**
+
+Selim Ben Haj Braiek
+🎓 Master’s Student in Data Science & Artificial Intelligence
+💼 Aspiring AI Engineer | Full-Stack Developer | Blockchain Enthusiast
+
