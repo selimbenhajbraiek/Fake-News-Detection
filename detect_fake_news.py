@@ -228,3 +228,37 @@ get_coherence_scores(corpus_tdf_fake, dictionary_fake , fake_news_text, min_topi
 lsi_model = LsiModel(corpus_tdf_fake, id2word = dictionary_fake, num_topics = 7) 
 lsi_model.print_topics()
 
+# Bag of Words 
+X = [', ' . join (map(str,1)) for l in data['text_clean']]
+
+Y = data['fake_or_factual' ]
+
+count_vec = CountVectorizer()
+
+countvec_fit = count_vec.fit_transform(X)
+
+bag_of_words = pd.DataFrame(countvec_fit.toarray(), columns = count_vec.get_feature_names_out())
+
+# Train Test Split and Logistic Regression
+
+X_train , X_test, y_train, y_test = train_test_split(bag_of_words, Y, test_size = 0.3)
+
+lr = LogisticRegression(random_state = 42).fit(X_train,y_train)
+
+lr_predict = lr.predict(X_test)
+
+accuracy_score(y_test, lr_predict)
+
+print(classification_report(y_test,lr_predict))
+
+
+# TF-IDF and SVM Classifier
+
+svm = SGDClassifier().fit(X_train, y_train)
+
+svm_predict = svm.predict(X_test)
+
+accuracy_score(y_test, svm_predict)
+
+
+print(classification_report(y_test,svm_predict))
