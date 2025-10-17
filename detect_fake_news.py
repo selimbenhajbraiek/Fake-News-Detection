@@ -141,4 +141,90 @@ tokens_clean = sum(data['text_clean' ], [])
 
 #n-grams - unigrams
 unigrams = (pd. Series(nltk.ngrams(tokens_clean, 1)).value_counts()).reset_index() [:10]
+default_plot_colour = "#1f77b4"   # blue color
+sns.barplot(
+    x = 'count',
+    y = 'token',
+    data = unigrams,
+    orient = 'h',
+    palette = [default_plot_colour],
+    hue = 'token',
+    legend = False)\
+.set(title = 'Most common Unigrams after preprocessing')
+# Sentiment Analysis using VADER
+
+vader_sentiment = SentimentIntensityAnalyzer()
+data['vader_sentiment'] = data['text'].apply(lambda x: vader_sentiment.polarity_scores(x)['compound'])
+
+# Visualize sentiment distribution
+bins = [-1.0, -0.1, 0.1, 1.0]
+labels = ['negative', 'neutral', 'positive']
+data['sentiment_score_label'] = pd.cut(data['vader_sentiment'], bins=bins, labels=labels)
+data['sentiment_score_label'].value_counts().plot.bar(color = default_color)
+
+sns.countplot(
+    x = 'fake_or_factual',
+    hue = 'sentiment_score_label',
+    palette = sns.color_palette('hls'),
+    data = data
+).set(title = 'Fake or Fact News')
+
+# Topic Modeling 
+
+# LDA
+fake_news_text = data[data['fake_or_factual'] == "Fake News"]['text_clean'].reset_index(drop=True)
+fake_news_text = data[data['fake_or_factual'] == "Fake News"] ['text_clean'].reset_index(drop=True) 
+dictionary_fake = corpora.Dictionary(fake_news_text) 
+doc_term_fake = [dictionary_fake.doc2bow(text) for text in fake_news_text] 
+coherence_values = [] 
+model_list = [] 
+min_topics = 2 
+max_topics = 11 
+for num_topics_i in range(min_topics, max_topics+1): 
+    model = gensim.models.LdaModel(doc_term_fake, num_topics = num_topics_i, id2word = dictionary_fake) 
+    model_list.append(model) 
+    coherence_model = CoherenceModel(model=model, texts=fake_news_text, dictionary=dictionary_fake, coherence='c_v') 
+    coherence_values. append(coherence_model.get_coherence()) 
+
+# Plot coherence scores
+plt.plot(range(min_topics, max_topics+1), coherence_values) 
+plt.xlabel("Number of Topics") 
+plt.label("Coherence Scores") 
+plt.legend(("coherence_values"), loc='best') 
+plt.show()
+
+# Build LDA model with optimal number of topics
+num_topic_lda = 7 
+lda_model = gensim.models.LdaModel(doc_term_fake , num_topics = num_topic_lda ,id2word = dictionary_fake) 
+lda_model.print_topics(num_topics = num_topic_lda, num_words = 10)
+
+
+#Lsi Model
+
+def tfidf_corpus(doc_term_matrix):
+    tfidf = TfidfModel(corpus = doc_term_matrix, normalize = True)
+    corpus_tfidf = tfidf[doc_term_matrix]
+    return corpus_tfidf
+
+def get_coherence_scores(corpus, dictionary, text, min_topics, max_topics):
+    coherence_values = []
+    model_list = []
+    for num_topics_i in range(min_topics, max_topics+1):
+        model = LsiModel(corpus, num_topics = num_topics_i, id2word = dictionary)
+        model_list.append(model)
+        coherence_model = CoherenceModel(model = model, texts=text, dictionary=dictionary, coherence = 'c_v')
+        coherence_values.append(coherence_model.get_coherence())
+
+    plt.plot(range(min_topics, max_topics+1), coherence_values)
+    plt.xlabel("Number of Topics")
+    plt.ylabel("Coherence score")
+    plt.legend( ("coherence_values"), loc="best")
+    plt.show( )
+    
+corpus_tdf_fake = tfidf_corpus(doc_term_fake)
+get_coherence_scores(corpus_tdf_fake, dictionary_fake , fake_news_text, min_topics = 2, max_topics = 11 )
+
+# Build LSI model with optimal number of topics
+lsi_model = LsiModel(corpus_tdf_fake, id2word = dictionary_fake, num_topics = 7) 
+lsi_model.print_topics()
 
